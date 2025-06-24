@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Carrega as credenciais
-with open('credentials.json') as cred_file:
+with open("crendenciais.json") as cred_file:
     credenciais = json.load(cred_file)
 
 email_remetente = credenciais['email_remetente']
