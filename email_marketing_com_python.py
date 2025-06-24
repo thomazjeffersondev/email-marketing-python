@@ -1,17 +1,24 @@
 import smtplib
+import json
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# Configurações do remetente
-smtp_server = 'smtp.gmail.com'
-smtp_port = 587
-email_remetente = 'seu_email@gmail.com'
-senha = 'sua_senha_do_app'  # Use senha de app se for Gmail
+# Carrega as credenciais
+with open('credentials.json') as cred_file:
+    credenciais = json.load(cred_file)
+
+email_remetente = credenciais['email_remetente']
+senha = credenciais['senha']
+smtp_host = credenciais['smtp_host']
+smtp_port = credenciais['smtp_port']
 
 # Lista de destinatários
-destinatarios = ['cliente1@email.com', 'cliente2@email.com']
+destinatarios = [
+    'cliente1@email.com',
+    'cliente2@email.com'
+]
 
-# Criando o corpo do e-mail (HTML)
+# Corpo do e-mail (HTML)
 html = """
 <html>
   <body>
@@ -22,24 +29,26 @@ html = """
 </html>
 """
 
-# Criando o servidor SMTP
-server = smtplib.SMTP(smtp_server, smtp_port)
-server.starttls()
-server.login(email_remetente, senha)
+# Enviando e-mails
+try:
+    server = smtplib.SMTP(smtp_host, smtp_port)
+    server.starttls()
+    server.login(email_remetente, senha)
+    print("✅ Login bem-sucedido!")
 
-# Enviando e-mail para cada destinatário
-for destinatario in destinatarios:
-    msg = MIMEMultipart('alternative')
-    msg['From'] = email_remetente
-    msg['To'] = destinatario
-    msg['Subject'] = '🎯 Promoção Exclusiva Só Para Você!'
+    for destinatario in destinatarios:
+        msg = MIMEMultipart('alternative')
+        msg['From'] = email_remetente
+        msg['To'] = destinatario
+        msg['Subject'] = '🎯 Promoção Exclusiva Só Para Você!'
 
-    # Anexa o HTML ao corpo da mensagem
-    msg.attach(MIMEText(html, 'html'))
+        msg.attach(MIMEText(html, 'html'))
 
-    # Envia o e-mail
-    server.sendmail(email_remetente, destinatario, msg.as_string())
-    print(f'E-mail enviado para {destinatario}')
+        server.sendmail(email_remetente, destinatario, msg.as_string())
+        print(f'📤 E-mail enviado para {destinatario}')
 
-# Finaliza a conexão
-server.quit()
+    server.quit()
+    print("✅ Todos os e-mails foram enviados com sucesso!")
+
+except Exception as e:
+    print(f'❌ Erro ao enviar e-mail: {e}')

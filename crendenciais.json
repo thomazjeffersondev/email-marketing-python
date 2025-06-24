@@ -1,0 +1,6 @@
+{
+  "email_remetente": "curso.python.dev@gmail.com",
+  "senha": "SUA_SENHA_DO_APP",
+  "smtp_host": "smtp.gmail.com",
+  "smtp_port": 587
+}
